@@ -181,6 +181,9 @@ public class GameBoard extends JPanel{
         g.drawString("Your Board", 0, 420);
         g.drawString("Opponent Board", 400, 420);
 
+//        GameStats stats = game.getGameStats();
+//        g.drawString(stats.formatStats(), 200, 440);
+
     }
 
     private void drawBoard (Graphics g, BattleshipBoard board, int x1, boolean showShips) {
@@ -210,7 +213,11 @@ public class GameBoard extends JPanel{
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(800, 450);
+        return new Dimension(800, 470);
+    }
+
+    public BattleshipGame getGame() {
+        return game;
     }
 
 }

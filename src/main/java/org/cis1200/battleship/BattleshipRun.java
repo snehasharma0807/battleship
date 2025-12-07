@@ -27,10 +27,20 @@ public class BattleshipRun implements Runnable {
         resetButton.addActionListener(e -> gameBoard.reset());
         controlPanel.add(resetButton);
 
+        JButton statsButton = new JButton("View Stats");
+        statsButton.addActionListener(e -> {showStats(frame, gameBoard);}); // add stats formatted
+        controlPanel.add(statsButton);
+
         frame.pack();
         frame.setVisible(true);
         gameBoard.reset();
 
+    }
+
+    private void showStats(JFrame frame, GameBoard gameBoard) {
+        GameStats stats = gameBoard.getGame().getGameStats();
+        String message = "Battleship Statistics: \n" + stats.formatStats();
+        JOptionPane.showMessageDialog(frame, message);
     }
 
 }

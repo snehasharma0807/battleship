@@ -1,5 +1,9 @@
 package org.cis1200.battleship;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 
 public class BattleshipGame {
@@ -9,6 +13,7 @@ public class BattleshipGame {
     private GameState currState;
     private Random random;
     private Opponent opponent;
+    private GameStats stats;
 
     public BattleshipGame() {
         myBoard = new BattleshipBoard();
@@ -18,6 +23,7 @@ public class BattleshipGame {
         random = new Random();
 
         opponent = new Opponent();
+        stats = new GameStats();
 
     }
 
@@ -74,8 +80,9 @@ public class BattleshipGame {
         ResultOfShot resultOfShot = oppBoard.getShot(row, col);
 
         if ((resultOfShot == ResultOfShot.HIT) || (resultOfShot == ResultOfShot.SUNK) || (resultOfShot == ResultOfShot.MISS)) {
-            opponent.recordOppShot(row, col, resultOfShot);
+//            opponent.recordOppShot(row, col, resultOfShot);
             if (oppBoard.isAllSunk()) {
+                stats.recordMyWin();
                 currState = GameState.GAME_ENDED;
                 return resultOfShot;
             }
@@ -84,12 +91,15 @@ public class BattleshipGame {
         return resultOfShot;
     }
 
-    public int[] oppFireShot() {
+    public void oppFireShot() {
         if (currState != GameState.PLAYING_CURRENTLY || isMyTurn) {
-            return null;
+            return;
         }
 
         int[] shot = opponent.chooseOppShot();
+
+
+
         int row = shot[0];
         int col = shot[1];
 
@@ -97,11 +107,12 @@ public class BattleshipGame {
         opponent.recordOppShot(row, col, resultOfShot);
 
         if (myBoard.isAllSunk()) {
+            stats.recordOpponentWin();
             currState = GameState.GAME_ENDED;
         }
 
         isMyTurn = true;
-        return new int[] {row, col};
+//        return new int[] {row, col};
     }
 
     public boolean isGameOver() {
@@ -124,4 +135,10 @@ public class BattleshipGame {
         currState = GameState.MY_TURN;
         opponent = new Opponent();
     }
+
+    public GameStats getGameStats() {
+        return stats;
+    }
+
+
 }
