@@ -124,7 +124,7 @@ public class GameBoard extends JPanel{
         }
 
         if (!game.isGameOver() && !game.isMyTurn()) {
-            Timer timer = new Timer(1, e -> {
+            Timer timer = new Timer(500, e -> {
                 game.oppFireShot();
                 updateStatus();
                 repaint();

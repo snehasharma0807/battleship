@@ -31,6 +31,10 @@ public class BattleshipRun implements Runnable {
         statsButton.addActionListener(e -> {showStats(frame, gameBoard);}); // add stats formatted
         controlPanel.add(statsButton);
 
+        JButton shotHistoryButton = new JButton("Shot History");
+        shotHistoryButton.addActionListener(e -> {showShots(frame, gameBoard);});
+        controlPanel.add(shotHistoryButton);
+
         frame.pack();
         frame.setVisible(true);
         gameBoard.reset();
@@ -41,6 +45,21 @@ public class BattleshipRun implements Runnable {
         GameStats stats = gameBoard.getGame().getGameStats();
         String message = "Battleship Statistics: \n" + stats.formatStats();
         JOptionPane.showMessageDialog(frame, message);
+    }
+
+    private void showShots(JFrame frame, GameBoard gameBoard) {
+        BattleshipGame battleshipGame = gameBoard.getGame();
+
+        if (battleshipGame.getTotalShots() == 0) {
+            JOptionPane.showMessageDialog(frame, "You need at least one shot!");
+            return;
+        }
+
+        JTextArea textArea = new JTextArea(battleshipGame.getShotsFormatted());
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setPreferredSize(new Dimension(400,400));
+        JOptionPane.showMessageDialog(frame, scrollPane, "Battleship Shots", JOptionPane.INFORMATION_MESSAGE);
     }
 
 }

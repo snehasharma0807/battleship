@@ -1,0 +1,3 @@
+my_wins: 2
+opponent_wins: 3
+total_games: 5

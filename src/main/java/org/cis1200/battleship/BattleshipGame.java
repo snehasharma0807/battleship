@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+import java.util.TreeMap;
+
 
 public class BattleshipGame {
     private BattleshipBoard myBoard;
@@ -14,6 +16,8 @@ public class BattleshipGame {
     private Random random;
     private Opponent opponent;
     private GameStats stats;
+    private TreeMap<Integer, Shot> shots;
+    private int shotCounter;
 
     public BattleshipGame() {
         myBoard = new BattleshipBoard();
@@ -24,6 +28,9 @@ public class BattleshipGame {
 
         opponent = new Opponent();
         stats = new GameStats();
+
+        shots = new TreeMap<>();
+        shotCounter = 0;
 
     }
 
@@ -81,6 +88,9 @@ public class BattleshipGame {
 
         if ((resultOfShot == ResultOfShot.HIT) || (resultOfShot == ResultOfShot.SUNK) || (resultOfShot == ResultOfShot.MISS)) {
 //            opponent.recordOppShot(row, col, resultOfShot);
+
+            recordShot(row, col, resultOfShot, true);
+
             if (oppBoard.isAllSunk()) {
                 stats.recordMyWin();
                 currState = GameState.GAME_ENDED;
@@ -104,6 +114,7 @@ public class BattleshipGame {
         int col = shot[1];
 
         ResultOfShot resultOfShot = myBoard.getShot(row, col);
+        recordShot(row, col, resultOfShot, false);
         opponent.recordOppShot(row, col, resultOfShot);
 
         if (myBoard.isAllSunk()) {
@@ -134,10 +145,61 @@ public class BattleshipGame {
         isMyTurn = true;
         currState = GameState.MY_TURN;
         opponent = new Opponent();
+        shots.clear();
+        shotCounter = 0;
     }
 
     public GameStats getGameStats() {
         return stats;
+    }
+
+    public void recordShot(int row, int col, ResultOfShot resultOfShot, boolean myFire) {
+        Shot shot = new Shot(row, col, resultOfShot, myFire);
+        shots.put(shotCounter, shot);
+        shotCounter++;
+    }
+
+    public TreeMap<Integer, Shot> getShots() {
+        return shots;
+    }
+
+    public int getTotalShots() {
+        return shotCounter;
+    }
+
+    public int getMyShotCount() {
+        int count = 0;
+        for (Shot shot : shots.values()) {
+            if (shot.isMyShot()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int getOppShotCount() {
+        int count = 0;
+        for (Shot shot : shots.values()) {
+            if (!shot.isMyShot()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public String getShotsFormatted() {
+        if (shots.isEmpty()) {
+            return "No shots fired yet.";
+        }
+
+        StringBuilder toReturn  = new StringBuilder("Shot History: \n\n\n");
+        for (Shot shot : shots.values()) {
+            toReturn.append(shot.toString()).append("\n\n");
+        }
+        toReturn.append("\n\nTotal Shots: ").append(getTotalShots()).append("\n");
+        toReturn.append("Your Shots: ").append(getMyShotCount()).append("\n");
+        toReturn.append("Opponent Shots: ").append(getOppShotCount()).append("\n");
+        return toReturn.toString();
     }
 
 
