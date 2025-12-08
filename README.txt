@@ -21,13 +21,13 @@ PennKey: 51061765
   gameboard is a 2D grid that doesn't change in size. This meant that 2D arrays were
   a really natural way to represent this information & look up specific positions.
 
-  2. Inheritance/Subtyping
-  I created a Ship class that included a lot of common functions of all types of ships.
-  For example, it had a getSize() function, hit() function, etc. I created 5 subclasses
-  of Ship that represented each of Battleship's 5 types of ships (Carrier, Battleship,
-  Cruiser, Submarine, and Destroyer). The difference between each of these ships is their
-  relative lengths. By making these all subclasses, I could use polymorphism and static vs.
-  dynamic states to treat them similarly when calling functions on the ships.
+  2. JUnit Testable Component
+  The game logic is mainly in BattleshipGame and BattleshipBoard, which are independent
+  of the GUI components in GameBoard. This allowed me to test the game logic through calls
+  to various functions. I implemented 20 JUnit tests covering validations of placing ships
+  on the board, how to shoot at the board, checking the state of the game, verifying that
+  File I/O seems to be functioning as intended, and testing edge cases like file errors
+  and bound errors.
 
   3. Collections
   I used a TreeMap<Integer, Shot> to store the history of all shots fired during the game.
@@ -113,11 +113,5 @@ PennKey: 51061765
 
 - Cite any external resources (images, tutorials, etc.) that you may have used 
   while implementing your game.
-  I watched a few videos on File I/O since I had to save a lot of really specific information
-  when saving the game state. Specifically, I watched these videos:
-  - https://www.youtube.com/watch?v=COx_SUgKJCc
-  - https://www.youtube.com/watch?v=oDralcylcDQ
   The rules for my Battleship game mainly game from this website:
   - https://gameonfamily.com/blogs/tutorials/battleship?srsltid=AfmBOor7lu8QhIRtVbJrrv0rnwYJ2rDIdiyFMa9X4xO7ngbArwPVTotj
-  I also referenced the official Java Swing documentation a lot to figure out how to build
-  out some of the functionalities I wanted.

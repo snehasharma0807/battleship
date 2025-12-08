@@ -3,7 +3,6 @@ package org.cis1200.battleship;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
@@ -29,15 +28,21 @@ public class BattleshipRun implements Runnable {
         controlPanel.add(resetButton);
 
         JButton statsButton = new JButton("View Stats");
-        statsButton.addActionListener(e -> {showStats(frame, gameBoard);}); // add stats formatted
+        statsButton.addActionListener(e -> {
+            showStats(frame, gameBoard);
+        }); // add stats formatted
         controlPanel.add(statsButton);
 
         JButton shotHistoryButton = new JButton("Shot History");
-        shotHistoryButton.addActionListener(e -> {showShots(frame, gameBoard);});
+        shotHistoryButton.addActionListener(e -> {
+            showShots(frame, gameBoard);
+        });
         controlPanel.add(shotHistoryButton);
 
         JButton instructionsButton = new JButton("Instructions");
-        instructionsButton.addActionListener(e -> {showInstructions();});
+        instructionsButton.addActionListener(e -> {
+            showInstructions();
+        });
         controlPanel.add(instructionsButton);
 
         JButton saveButton = new JButton("Save Game");
@@ -88,13 +93,16 @@ public class BattleshipRun implements Runnable {
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
         scrollPane.setPreferredSize(new Dimension(400,400));
-        JOptionPane.showMessageDialog(frame, scrollPane, "Battleship Shots", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(frame, scrollPane, "Battleship Shots",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void showInstructions() {
-        JOptionPane.showMessageDialog(null, "Objective: Sink all the opponents ships before they sink yours. \n" +
+        JOptionPane.showMessageDialog(null,
+                "Objective: Sink all the opponents ships before they sink yours. \n" +
                 "How to Play:\n" +
-                "1. Place your ships on your board by clicking. You can rotate ships by clicking the R key.\n" +
+                "1. Place your ships on your board by clicking. You can rotate ships by clicking" +
+                        " the R key.\n" +
                 "2. Click Start when done.\n" +
                 "3. Click on cells on your opponent's board to fire.\n" +
                 "4. A red cell means you hit a ship. A green cell means you missed.\n" +

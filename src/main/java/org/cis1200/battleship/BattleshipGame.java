@@ -1,7 +1,6 @@
 package org.cis1200.battleship;
 
 import java.io.*;
-import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
 
@@ -49,7 +48,7 @@ public class BattleshipGame {
         return isMyTurn;
     }
 
-    public boolean placeMyShip (Ship ship, int row, int col, boolean isHor) {
+    public boolean placeMyShip(Ship ship, int row, int col, boolean isHor) {
         if (currState != GameState.MY_TURN) {
             return false;
         } else {
@@ -66,7 +65,8 @@ public class BattleshipGame {
     }
 
     public void placeOppShips() {
-        for (Ship ship : new Ship[] {new Carrier(), new Battleship(), new Cruiser(), new Submarine(), new Destroyer()}) {
+        for (Ship ship : new Ship[] {new Carrier(), new Battleship(),
+            new Cruiser(), new Submarine(), new Destroyer()}) {
             boolean placed = false;
             while (!placed) {
                 int row = random.nextInt(BattleshipBoard.BOARD_SIZE);
@@ -84,7 +84,8 @@ public class BattleshipGame {
 
         ResultOfShot resultOfShot = oppBoard.getShot(row, col);
 
-        if ((resultOfShot == ResultOfShot.HIT) || (resultOfShot == ResultOfShot.SUNK) || (resultOfShot == ResultOfShot.MISS)) {
+        if ((resultOfShot == ResultOfShot.HIT) || (resultOfShot == ResultOfShot.SUNK)
+                || (resultOfShot == ResultOfShot.MISS)) {
 //            opponent.recordOppShot(row, col, resultOfShot);
 
             recordShot(row, col, resultOfShot, true);
@@ -277,7 +278,7 @@ public class BattleshipGame {
                 }
             }
 
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         } finally {
             reader.close();
@@ -299,7 +300,7 @@ public class BattleshipGame {
         writer.write("boardEnd\n");
     }
 
-    private char cellFormattedToSave (Cell cell) {
+    private char cellFormattedToSave(Cell cell) {
         if (cell == Cell.EMPTY) {
             return 'E';
         } else if (cell == Cell.SHIP) {
@@ -329,7 +330,8 @@ public class BattleshipGame {
             for (int col = 0; col < BattleshipBoard.BOARD_SIZE; col++) {
                 Ship shipAtPos = board.getShipAtLocation(row, col);
                 if (shipAtPos == target) {
-                    if (col + 1 < BattleshipBoard.BOARD_SIZE && (board.getShipAtLocation(row, col + 1) == target)) {
+                    if (col + 1 < BattleshipBoard.BOARD_SIZE &&
+                        (board.getShipAtLocation(row, col + 1) == target)) {
                         return new int[]{row, col, 1};
                     } else {
                         return new int[]{row, col, 0};
@@ -355,7 +357,8 @@ public class BattleshipGame {
     private void saveShotHistory(BufferedWriter writer) throws IOException {
         for (Integer shot : shots.keySet()) {
             Shot s =  shots.get(shot);
-            writer.write(shot + "," + s.getRow() + "," + s.getCol() + "," + s.getResult() + "," + s.isMyShot() + "\n");
+            writer.write(shot + "," + s.getRow() + "," + s.getCol() +
+                    "," + s.getResult() + "," + s.isMyShot() + "\n");
         }
         writer.write("shotHistoryEnd\n");
     }

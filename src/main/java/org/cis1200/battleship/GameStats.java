@@ -6,7 +6,7 @@ public class GameStats {
 
     private int myWins;
     private int opponentWins;
-    private static String STATS_FILE = "battleshipStats.txt";
+    private static String statsFile = "battleshipStats.txt";
 
     public GameStats() {
         myWins = 0;
@@ -15,15 +15,15 @@ public class GameStats {
 
     }
 
-    public int getMyWins(){
+    public int getMyWins() {
         return myWins;
     }
 
-    public int getOpponentWins(){
+    public int getOpponentWins() {
         return opponentWins;
     }
 
-    public int getTotalGames(){
+    public int getTotalGames() {
         return myWins + opponentWins;
     }
 
@@ -45,18 +45,18 @@ public class GameStats {
 
     public void saveStats() {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(STATS_FILE));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(statsFile));
             writer.write("my_wins: " + myWins + "\n");
             writer.write("opponent_wins: " + opponentWins + "\n");
             writer.write("total_games: " + getTotalGames() + "\n");
             writer.close();
         } catch (IOException e) {
-            System.out.println("Error writing stats file: "+ e.getMessage());
+            System.out.println("Error writing stats file: " + e.getMessage());
         }
     }
 
     private void loadStats() {
-        File file = new File(STATS_FILE);
+        File file = new File(statsFile);
         if (!file.exists()) {
             return;
         }
@@ -72,14 +72,16 @@ public class GameStats {
             }
             reader.close();
         } catch (IOException e) {
-            System.out.println("Error reading stats file: "+ e.getMessage());
+            System.out.println("Error reading stats file: " + e.getMessage());
             myWins = 0;
             opponentWins = 0;
         }
     }
 
     public String formatStats() {
-        return "Your Wins: " + myWins + "\nOpponent Wins: " + opponentWins + "\nTotal Games: " + getTotalGames() + " | Win Rate: " + getWinRate();
+        return "Your Wins: " + myWins + "\nOpponent Wins: "
+                + opponentWins + "\nTotal Games: " + getTotalGames() +
+                " | Win Rate: " + getWinRate();
     }
 
     public String getWinRate() {

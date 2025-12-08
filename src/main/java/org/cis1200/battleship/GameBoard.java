@@ -3,7 +3,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class GameBoard extends JPanel{
+public class GameBoard extends JPanel {
     private BattleshipGame game;
     private JLabel statusLabel;
     private JButton startButton;
@@ -11,7 +11,8 @@ public class GameBoard extends JPanel{
     private Ship currShip = null;
     private int shipPlacementIndex = 0;
     private boolean isHor = true;
-    private Ship[] shipsToPlace = {new Carrier(), new Battleship(), new Cruiser(), new Submarine(), new Destroyer()};
+    private Ship[] shipsToPlace = {new Carrier(), new Battleship(),
+        new Cruiser(), new Submarine(), new Destroyer()};
 
     public GameBoard(JLabel initStatus) {
         setBorder(BorderFactory.createLineBorder(Color.black));
@@ -20,17 +21,17 @@ public class GameBoard extends JPanel{
         game = new BattleshipGame();
         statusLabel = initStatus;
 
-        addMouseListener(new MouseAdapter(){
+        addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
                 handleMouseClick(e.getX(), e.getY());
             }
         });
 
-        addKeyListener(new KeyAdapter(){
+        addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent e){
-                if ((e.getKeyCode() == KeyEvent.VK_LEFT) || e.getKeyCode() == KeyEvent.VK_R){
+            public void keyPressed(KeyEvent e) {
+                if ((e.getKeyCode() == KeyEvent.VK_LEFT) || e.getKeyCode() == KeyEvent.VK_R) {
                     isHor = !isHor;
                     updateStatus();
                     repaint();
@@ -38,9 +39,9 @@ public class GameBoard extends JPanel{
             }
         });
 
-        addMouseMotionListener(new MouseMotionAdapter(){
+        addMouseMotionListener(new MouseMotionAdapter() {
             @Override
-            public void mouseMoved(MouseEvent e){
+            public void mouseMoved(MouseEvent e) {
                 if (game.getCurrState() == GameState.MY_TURN) {
                     repaint();
                 }
@@ -67,11 +68,11 @@ public class GameBoard extends JPanel{
         requestFocusInWindow();
     }
 
-    private void handleMouseClick(int x, int y){
+    private void handleMouseClick(int x, int y) {
         requestFocusInWindow();
         GameState state = game.getCurrState();
 
-        if (state == GameState.MY_TURN){
+        if (state == GameState.MY_TURN) {
             handlePlacementClick(x, y);
         } else if (state == GameState.PLAYING_CURRENTLY) {
             handleBattleClick(x, y);
@@ -81,7 +82,7 @@ public class GameBoard extends JPanel{
         repaint();
     }
 
-    private void handlePlacementClick(int x, int y){
+    private void handlePlacementClick(int x, int y) {
         if (currShip == null) {
             return;
         }
@@ -106,7 +107,7 @@ public class GameBoard extends JPanel{
         }
     }
 
-    private void handleBattleClick(int x, int y){
+    private void handleBattleClick(int x, int y) {
         if (!game.isMyTurn() || game.isGameOver()) {
             return;
         }
@@ -148,9 +149,13 @@ public class GameBoard extends JPanel{
         if (state == GameState.MY_TURN) {
             if (currShip != null) {
                 if (isHor) {
-                    statusLabel.setText("Place " + currShip.getName() + " (size " + currShip.getSize() + " ). Click \"R\" to rotate. It is horizontal right now.");
+                    statusLabel.setText("Place " + currShip.getName() +
+                            " (size " + currShip.getSize() + " ). Click \"R\" to rotate. " +
+                            "It is horizontal right now.");
                 } else {
-                    statusLabel.setText("Place " + currShip.getName() + " (size " + currShip.getSize() + " ). Click \"R\" to rotate. It is vertical right now.");
+                    statusLabel.setText("Place " + currShip.getName() +
+                            " (size " + currShip.getSize() + " ). Click \"R\" to rotate. " +
+                            "It is vertical right now.");
                 }
 
 
@@ -186,7 +191,7 @@ public class GameBoard extends JPanel{
 
     }
 
-    private void drawBoard (Graphics g, BattleshipBoard board, int x1, boolean showShips) {
+    private void drawBoard(Graphics g, BattleshipBoard board, int x1, boolean showShips) {
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 int x = x1 + col * 40;

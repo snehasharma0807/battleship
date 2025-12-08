@@ -54,7 +54,8 @@ public class CompilationTest {
         }
 
         System.out.println(
-                "\n\nYour code compiles and your org.cis1200.battleship.Game.main method has the right type."
+                "\n\nYour code compiles and your org.cis1200.battleship.Game.main " +
+                        "method has the right type."
         );
         System.out.println("Next step is the demo with your TA. \n\n");
     }

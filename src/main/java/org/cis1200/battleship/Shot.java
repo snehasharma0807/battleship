@@ -1,7 +1,5 @@
 package org.cis1200.battleship;
 
-import javax.xml.transform.Result;
-
 public class Shot {
     private int row;
     private int col;

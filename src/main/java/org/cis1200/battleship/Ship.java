@@ -6,7 +6,7 @@ public abstract class Ship {
     private final int size;
     private int hits;
 
-    public Ship (String name, int size) {
+    public Ship(String name, int size) {
         this.name = name;
         this.size = size;
         this.hits = 0;

@@ -72,7 +72,8 @@ public class Opponent {
             int nR = row + verticalDirections[i];
             int nC = col + horizontalDirections[i];
 
-            if (nR >= 0 && nR < BattleshipBoard.BOARD_SIZE &&  nC >= 0 && nC < BattleshipBoard.BOARD_SIZE) {
+            if (nR >= 0 && nR < BattleshipBoard.BOARD_SIZE
+                &&  nC >= 0 && nC < BattleshipBoard.BOARD_SIZE) {
                 if (!locsFiredAtAlready[nR][nC]) {
                     listOfTargets.add(new int[]{nR, nC});
                 }
@@ -116,7 +117,8 @@ public class Opponent {
             int nR = hit[0] + verticalDirections[i];
             int nC = hit[1] + horizontalDirections[i];
 
-            if (nR >= 0 && nR < BattleshipBoard.BOARD_SIZE &&  nC >= 0 && nC < BattleshipBoard.BOARD_SIZE) {
+            if (nR >= 0 && nR < BattleshipBoard.BOARD_SIZE &&  nC >= 0
+                && nC < BattleshipBoard.BOARD_SIZE) {
                 if (!locsFiredAtAlready[nR][nC]) {
                     return new int[]{nR, nC};
                 }
@@ -141,26 +143,30 @@ public class Opponent {
 
         if (isHor) {
             int row = listOfTargets.get(0)[0];
-            if (row >= 0 && row < BattleshipBoard.BOARD_SIZE &&  maxC + 1 >= 0 && maxC+1 < BattleshipBoard.BOARD_SIZE) {
-                if (!locsFiredAtAlready[row][maxC+1]) {
-                    return new int[]{row, maxC+1};
+            if (row >= 0 && row < BattleshipBoard.BOARD_SIZE
+                &&  maxC + 1 >= 0 && maxC + 1 < BattleshipBoard.BOARD_SIZE) {
+                if (!locsFiredAtAlready[row][maxC + 1]) {
+                    return new int[]{row, maxC + 1};
                 }
             }
-            if (row >= 0 && row < BattleshipBoard.BOARD_SIZE &&  minC - 1 >= 0 && minC-1 < BattleshipBoard.BOARD_SIZE) {
-                if  (!locsFiredAtAlready[row][minC-1]) {
-                    return new int[]{row, minC-1};
+            if (row >= 0 && row < BattleshipBoard.BOARD_SIZE
+                &&  minC - 1 >= 0 && minC - 1 < BattleshipBoard.BOARD_SIZE) {
+                if (!locsFiredAtAlready[row][minC - 1]) {
+                    return new int[]{row, minC - 1};
                 }
             }
         } else {
-            int col =  listOfTargets.get(0)[1];
-            if (maxR + 1 >= 0 && maxR + 1 < BattleshipBoard.BOARD_SIZE &&  col >= 0 && col < BattleshipBoard.BOARD_SIZE) {
-                if (!locsFiredAtAlready[maxR+1][col]) {
-                    return new int[]{maxR+1, col};
+            int col = listOfTargets.get(0)[1];
+            if (maxR + 1 >= 0 && maxR + 1 < BattleshipBoard.BOARD_SIZE
+                && col >= 0 && col < BattleshipBoard.BOARD_SIZE) {
+                if (!locsFiredAtAlready[maxR + 1][col]) {
+                    return new int[]{maxR + 1, col};
                 }
             }
-            if (minR - 1 >= 0 && minR - 1 < BattleshipBoard.BOARD_SIZE &&  col >= 0 && col < BattleshipBoard.BOARD_SIZE) {
-                if   (!locsFiredAtAlready[minR-1][col]) {
-                    return new int[]{minR-1, col};
+            if (minR - 1 >= 0 && minR - 1 < BattleshipBoard.BOARD_SIZE
+                && col >= 0 && col < BattleshipBoard.BOARD_SIZE) {
+                if (!locsFiredAtAlready[minR - 1][col]) {
+                    return new int[]{minR - 1, col};
                 }
             }
         }

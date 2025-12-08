@@ -32,9 +32,9 @@ public class BattleshipBoard {
                 return false;
             }
         } else {
-                if ((row + shipSize > BOARD_SIZE) || (col < 0) || (col >= BOARD_SIZE)) {
-                    return false;
-                }
+            if ((row + shipSize > BOARD_SIZE) || (col < 0) || (col >= BOARD_SIZE)) {
+                return false;
+            }
         }
 
         if (isHor) {
