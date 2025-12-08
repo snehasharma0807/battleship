@@ -220,4 +220,12 @@ public class GameBoard extends JPanel{
         return game;
     }
 
+    public void updateAfterLoad() {
+        currShip = null;
+        shipPlacementIndex = shipsToPlace.length;
+        startButton.setVisible(false);
+        updateStatus();
+        requestFocusInWindow();
+    }
+
 }

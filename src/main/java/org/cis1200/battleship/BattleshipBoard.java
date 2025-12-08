@@ -138,6 +138,34 @@ public class BattleshipBoard {
         return true;
     }
 
+    public void setCell(int row, int col, Cell cell) {
+        if (row >= 0 && row < BOARD_SIZE) {
+            if (col >= 0 && col < BOARD_SIZE) {
+                board[row][col] = cell;
+            }
+        }
+    }
+
+    public boolean placeShipDuringLoad(Ship ship, int row, int col, boolean isHor) {
+        if (isHor) {
+            for (int i = col; i < col + ship.getSize(); i++) {
+                if (i >= BOARD_SIZE || row < 0 || row >= BOARD_SIZE) {
+                    return false;
+                }
+                shipLocs[row][i] = ship;
+            }
+        } else {
+            for (int i = row; i < row + ship.getSize(); i++) {
+                if (i >= BOARD_SIZE || col < 0 || col >= BOARD_SIZE) {
+                    return false;
+                }
+                shipLocs[i][col] = ship;
+            }
+        }
+        ships.add(ship);
+        return true;
+    }
+
 
 
 

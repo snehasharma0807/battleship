@@ -34,4 +34,8 @@ public abstract class Ship {
         return hits >= size;
     }
 
+    public int getHits() {
+        return hits;
+    }
+
 }

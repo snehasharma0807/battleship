@@ -167,4 +167,14 @@ public class Opponent {
         resetMode();
         return randomShot();
     }
+
+    public boolean[][] getLocsFiredAt() {
+        return locsFiredAtAlready;
+    }
+
+    public void markAsFired(int row, int col) {
+        locsFiredAtAlready[row][col] = true;
+    }
+
+
 }

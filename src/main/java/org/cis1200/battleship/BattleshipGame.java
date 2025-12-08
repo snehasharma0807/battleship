@@ -1,8 +1,6 @@
 package org.cis1200.battleship;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
@@ -200,6 +198,281 @@ public class BattleshipGame {
         toReturn.append("Your Shots: ").append(getMyShotCount()).append("\n");
         toReturn.append("Opponent Shots: ").append(getOppShotCount()).append("\n");
         return toReturn.toString();
+    }
+
+    public void saveGame(String filename) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+
+        try {
+            writer.write("battleshipSave\n");
+            writer.write("gameState:" + currState + "\n");
+            writer.write("myTurn:" + isMyTurn + "\n");
+            writer.write("shots:" + shotCounter + "\n");
+
+            writer.write("playerBoard:\n");
+            saveBoardCells(writer, myBoard);
+
+            writer.write("myShips:\n");
+            saveShips(writer, myBoard);
+
+            writer.write("opponentBoard:\n");
+            saveBoardCells(writer, oppBoard);
+
+            writer.write("oppShips:\n");
+            saveShips(writer, oppBoard);
+
+            writer.write("oppState:\n");
+            saveOppState(writer);
+
+            writer.write("shotHistory:\n");
+            saveShotHistory(writer);
+
+
+            writer.write("end\n");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            writer.close();
+        }
+    }
+
+    public void loadGame(String filename) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(filename));
+
+        try {
+            String ln = reader.readLine();
+            if (!ln.equals("battleshipSave")) {
+                throw new IOException();
+            }
+
+            myBoard = new BattleshipBoard();
+            oppBoard = new BattleshipBoard();
+            opponent = new Opponent();
+            shots = new TreeMap<>();
+            shotCounter = 0;
+
+            while ((ln = reader.readLine()) != null) {
+                ln = ln.trim();
+                if (ln.equals("end")) {
+                    break;
+                }
+                if (ln.startsWith("gameState:")) {
+                    currState = GameState.valueOf(ln.split(":")[1]);
+                } else if (ln.startsWith("myTurn:")) {
+                    isMyTurn = Boolean.parseBoolean(ln.split(":")[1]);
+                } else if (ln.startsWith("shots:")) {
+                    shotCounter = Integer.parseInt(ln.split(":")[1]);
+                } else if (ln.startsWith("playerBoard:")) {
+                    loadBoardCells(reader, myBoard);
+                } else if (ln.startsWith("opponentBoard:")) {
+                    loadBoardCells(reader, oppBoard);
+                } else if (ln.startsWith("myShips:")) {
+                    loadShips(reader, myBoard);
+                } else if (ln.startsWith("oppShips:")) {
+                    loadShips(reader, oppBoard);
+                } else if (ln.startsWith("oppState:")) {
+                    loadOppState(reader, oppBoard);
+                } else if (ln.startsWith("shotHistory:")) {
+                    loadShotHistory(reader);
+                }
+            }
+
+        } catch (IOException e){
+            System.out.println(e.getMessage());
+        } finally {
+            reader.close();
+        }
+    }
+
+    private void saveBoardCells(BufferedWriter writer, BattleshipBoard board) throws IOException {
+        for (int row = 0; row < BattleshipBoard.BOARD_SIZE; row++) {
+            for (int col = 0; col < BattleshipBoard.BOARD_SIZE; col++) {
+                Cell cell = board.getCell(row, col);
+                char c = cellFormattedToSave(cell);
+                writer.write(c);
+                if (col < BattleshipBoard.BOARD_SIZE - 1) {
+                    writer.write(",");
+                }
+            }
+            writer.write("\n");
+        }
+        writer.write("boardEnd\n");
+    }
+
+    private char cellFormattedToSave (Cell cell) {
+        if (cell == Cell.EMPTY) {
+            return 'E';
+        } else if (cell == Cell.SHIP) {
+            return 'S';
+        } else if (cell == Cell.HIT) {
+            return 'H';
+        } else if (cell == Cell.MISS) {
+            return 'M';
+        } else {
+            return 'E';
+        }
+    }
+
+    private void saveShips(BufferedWriter writer, BattleshipBoard board) throws IOException {
+        for (Ship ship : board.getShips()) {
+            int[] pos = findShipPosition(board, ship);
+            if (pos != null) {
+                writer.write(ship.getClass().getSimpleName() + "," +
+                        pos[0] + "," + pos[1] + "," + pos[2] + "," + ship.getHits() + "\n");
+            }
+        }
+        writer.write("shipEnd\n");
+    }
+
+    private int[] findShipPosition(BattleshipBoard board, Ship target) {
+        for (int row = 0; row < BattleshipBoard.BOARD_SIZE; row++) {
+            for (int col = 0; col < BattleshipBoard.BOARD_SIZE; col++) {
+                Ship shipAtPos = board.getShipAtLocation(row, col);
+                if (shipAtPos == target) {
+                    if (col + 1 < BattleshipBoard.BOARD_SIZE && (board.getShipAtLocation(row, col + 1) == target)) {
+                        return new int[]{row, col, 1};
+                    } else {
+                        return new int[]{row, col, 0};
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private void saveOppState(BufferedWriter writer) throws IOException {
+        boolean[][] fired = opponent.getLocsFiredAt();
+        for (int row = 0; row < BattleshipBoard.BOARD_SIZE; row++) {
+            for (int col = 0; col < BattleshipBoard.BOARD_SIZE; col++) {
+                if (fired[row][col]) {
+                    writer.write(row + "," + col + "\n");
+                }
+            }
+        }
+        writer.write("oppStateEnd\n");
+    }
+
+    private void saveShotHistory(BufferedWriter writer) throws IOException {
+        for (Integer shot : shots.keySet()) {
+            Shot s =  shots.get(shot);
+            writer.write(shot + "," + s.getRow() + "," + s.getCol() + "," + s.getResult() + "," + s.isMyShot() + "\n");
+        }
+        writer.write("shotHistoryEnd\n");
+    }
+
+    private void loadBoardCells(BufferedReader reader, BattleshipBoard board) throws IOException {
+        for (int row = 0; row < BattleshipBoard.BOARD_SIZE; row++) {
+            String ln = reader.readLine();
+            if (ln == null) {
+                throw new IOException();
+            }
+
+            ln = ln.trim();
+            String[] cells = ln.split(",");
+            if (cells.length != BattleshipBoard.BOARD_SIZE) {
+                throw new IOException();
+            }
+
+            for (int col = 0; col < BattleshipBoard.BOARD_SIZE; col++) {
+                Cell cell = charToCell(cells[col].trim().charAt(0));
+                board.setCell(row, col, cell);
+            }
+        }
+        String endLine = reader.readLine();
+        if (endLine == null) {
+            throw new IOException();
+        }
+    }
+
+    private Cell charToCell(char c) {
+        if (c == 'E') {
+            return Cell.EMPTY;
+        } else if (c == 'S') {
+            return Cell.SHIP;
+        } else if (c == 'H') {
+            return Cell.HIT;
+        } else if (c == 'M') {
+            return Cell.MISS;
+        } else {
+            return Cell.EMPTY;
+        }
+    }
+
+    private void loadShips(BufferedReader reader, BattleshipBoard board) throws IOException {
+        String ln;
+        while ((ln = reader.readLine()) != null) {
+            ln = ln.trim();
+            if (ln.isEmpty()) {
+                continue;
+            } else if (ln.equals("shipEnd")) {
+                break;
+            }
+
+            String[] ships  = ln.split(",");
+            String className = ships[0].trim();
+            int row = Integer.parseInt(ships[1].trim());
+            int col = Integer.parseInt(ships[2].trim());
+            boolean isHor = Integer.parseInt(ships[3].trim()) == 1;
+            int hits = Integer.parseInt(ships[4].trim());
+
+            Ship ship = switch (className) {
+                case "Carrier" -> new Carrier();
+                case "Battleship" -> new Battleship();
+                case "Cruiser" -> new Cruiser();
+                case "Submarine" -> new Submarine();
+                default -> new Destroyer();
+            };
+
+            boolean placed = board.placeShipDuringLoad(ship, row, col, isHor);
+
+            for (int i = 0; i < hits; i++) {
+                ship.hit();
+            }
+
+
+        }
+    }
+
+    private void loadOppState(BufferedReader reader, BattleshipBoard board) throws IOException {
+        String ln;
+        while ((ln = reader.readLine()) != null) {
+            ln = ln.trim();
+            if (ln.isEmpty()) {
+                continue;
+            }
+            if (ln.equals("oppStateEnd")) {
+                break;
+            }
+
+            String[] opps  = ln.split(",");
+            if (opps.length == 2) {
+                int row = Integer.parseInt(opps[0].trim());
+                int col = Integer.parseInt(opps[1].trim());
+                opponent.markAsFired(row, col);
+            }
+        }
+    }
+
+    private void loadShotHistory(BufferedReader reader) throws IOException {
+        String ln;
+        while ((ln = reader.readLine()) != null) {
+            ln = ln.trim();
+            if (ln.isEmpty()) {
+                continue;
+            }
+            if (ln.equals("shotHistoryEnd")) {
+                break;
+            }
+
+            String[] shotss  = ln.split(",");
+            int shotNum = Integer.parseInt(shotss[0].trim());
+            int row = Integer.parseInt(shotss[1].trim());
+            int col = Integer.parseInt(shotss[2].trim());
+            ResultOfShot result = ResultOfShot.valueOf(shotss[3].trim());
+            boolean player = Boolean.parseBoolean(shotss[4].trim());
+            Shot shot = new Shot(row, col, result, player);
+            shots.put(shotNum, shot);
+        }
     }
 
 
