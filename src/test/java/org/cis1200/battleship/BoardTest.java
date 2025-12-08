@@ -2,6 +2,9 @@ package org.cis1200.battleship;
 
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
+import java.util.TreeMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -144,7 +147,7 @@ public class BoardTest {
     @Test
     public void testInitialState() {
         BattleshipGame game = new BattleshipGame();
-        assertEquals(GameState.OPP_TURN, game.getCurrState());
+        assertEquals(GameState.MY_TURN, game.getCurrState());
         assertTrue(game.isMyTurn());
         assertFalse(game.isGameOver());
     }
@@ -153,26 +156,13 @@ public class BoardTest {
     public void testPlayerShipPlacement() {
         BattleshipGame game = new BattleshipGame();
         Ship destroyer = new Destroyer();
-        assertFalse(game.placeMyShip(destroyer, 0, 0, true));
+        assertTrue(game.placeMyShip(destroyer, 0, 0, true));
         BattleshipBoard board = game.getMyBoard();
-        assertEquals(Cell.EMPTY, board.getCell(0, 0));
-        assertEquals(Cell.EMPTY, board.getCell(0, 1));
+        assertEquals(Cell.SHIP, board.getCell(0, 0));
+        assertEquals(Cell.SHIP, board.getCell(0, 1));
         assertEquals(Cell.EMPTY, board.getCell(0, 2));
     }
 
-//    @Test
-//    public void testCanFireShot() {
-//        BattleshipGame game = new BattleshipGame();
-//
-//        game.placeMyShip(new Destroyer(), 5, 5, true);
-//        game.finishMyPlacement();
-//
-//        ResultOfShot result = game.fireShot(5, 5);
-//        assertEquals(ResultOfShot.HIT, result);
-//
-//        ResultOfShot result2 = game.fireShot(0, 0);
-//        assertEquals(ResultOfShot.MISS, result2);
-//    }
 
     @Test
     public void testGameReset() {
@@ -187,6 +177,84 @@ public class BoardTest {
         assertTrue(game.isMyTurn());
         assertFalse(game.isGameOver());
         assertTrue(game.getMyBoard().getShips().isEmpty());
+    }
+
+    @Test
+    public void testShipHit() {
+        Ship d = new  Destroyer();
+        assertFalse(d.isSunk());
+        assertEquals(0, d.getHits());
+
+        d.hit();
+        assertEquals(1, d.getHits());
+        assertFalse(d.isSunk());
+
+        d.hit();
+        assertEquals(2, d.getHits());
+        assertTrue(d.isSunk());
+    }
+
+
+    @Test
+    public void testShipCannotBeHitMoreThanItsLength() {
+        Ship d = new  Destroyer();
+        d.hit();
+        d.hit();
+        d.hit();
+        assertEquals(2, d.getHits());
+    }
+
+    @Test
+    public void testShipReset() {
+        Ship d = new  Destroyer();
+        d.hit();
+        assertEquals(1, d.getHits());
+        d.reset();
+        assertEquals(0, d.getHits());
+    }
+
+    @Test
+    public void testSaveAndLoad() throws IOException {
+        BattleshipGame game = new BattleshipGame();
+
+        game.placeMyShip(new Destroyer(), 5, 5, true);
+        game.finishMyPlacement();
+
+        game.fireShot(5, 5);
+        game.oppFireShot();
+        game.fireShot(6, 6);
+
+        game.saveGame("test_save.txt");
+
+        BattleshipGame loadGame = new BattleshipGame();
+        loadGame.loadGame("test_save.txt");
+
+        assertEquals(game.getCurrState(), loadGame.getCurrState());
+        assertEquals(game.isMyTurn(), loadGame.isMyTurn());
+        assertEquals(game.getMyBoard().getShips().size(), loadGame.getMyBoard().getShips().size());
+    }
+
+    @Test
+    public void testLoadNonexistentFile() {
+        BattleshipGame game = new BattleshipGame();
+        assertThrows(IOException.class, () -> game.loadGame("test_nonexistent.txt"));
+    }
+
+    @Test
+    public void testShotHistoryInOrder() {
+        BattleshipGame game = new BattleshipGame();
+
+        game.placeMyShip(new Destroyer(), 5, 5, true);
+        game.finishMyPlacement();
+        game.fireShot(5, 5);
+        game.oppFireShot();
+        game.fireShot(6, 6);
+
+        TreeMap<Integer, Shot> shotHistory = game.getShots();
+
+        assertEquals(3,  shotHistory.size());
+        assertEquals(0, shotHistory.firstKey().intValue());
+        assertEquals(2, shotHistory.lastKey().intValue());
     }
 
 
